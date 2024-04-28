@@ -1,35 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { AuthProvider } from '../contexts/AuthContext';
+import ProtectedRoute from '../middleware/ProtectedRoute';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import InboxPage from './pages/InboxPage';
+import EmailPage from './pages/EmailPage';
+import ComposePage from './pages/ComposePage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <AuthProvider>
+        <Switch>
+          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/register" component={RegisterPage} />
+          <ProtectedRoute exact path="/c/inbox" component={InboxPage} />
+          <ProtectedRoute exact path="/c/:emailCategory/:emailId" component={EmailPage} />
+          <ProtectedRoute exact path="/compose" component={ComposePage} />
+          <Route exact path="/" render={() => <Redirect to="/c/inbox" />} />
+          <Route path="*" component={NotFoundPage} />
+        </Switch>
+      </AuthProvider>
+    </Router>
+  );
 }
 
-export default App
+export default App;
